@@ -17,7 +17,7 @@ const GLint WIDTH = 800, HEIGHT = 800;
 bool WIREFRAME = false;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void DrawVAO();
+//void DrawVAO();
 mat4 GenerateModelMatrix(bool automatico, vec3 startingPos);
 //void doMovement(GLFWwindow* window);
 //para que el callback no de problemas llamo a las funciones de la classe aqui dentro
@@ -31,28 +31,6 @@ GLfloat Xrot;
 
 //inicializo camara
 Camera myCamera (vec3(0, 0, 3), vec3(0, 0, 0), 0.04f, 45.0f);
-/*
-//Cosas antiguas
-//vec3 cameraPos;
-//vec3 cameraTarget;
-//vec3 cameraFront;
-//vec3 cameraRight;
-//vec3 cameraUp;
-//mat4 lookAtMe(vec3 pos, vec3 target, vec3 worldUp);
-
-//GLfloat deltaTime;
-//GLfloat actualTime,lastTime;
-//GLfloat cameraSpeed = 3.f;
-
-//GLfloat myYaw = -90.0f;	//rotar en y
-//GLfloat myPitch = 0.0f; // rotar en x
-//GLfloat lastX = WIDTH / 2.0;
-//GLfloat lastY = HEIGHT / 2.0;
-
-//GLfloat fov = 45.0f;
-
-//bool primeritaVez;
-*/
 
 int main() {
 	
@@ -101,7 +79,8 @@ int main() {
 	//cargamos los shader
 	Shader myShader ("./src/3DVertex.vertexshader", "./src/3DFragment.fragmentshader");	
 
-	
+	//VAOVBOANTIGUOS
+	/*
 	GLfloat VertexBufferCube[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -220,7 +199,7 @@ int main() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
 	SOIL_free_image_data(image2);
 	glBindTexture(GL_TEXTURE_2D, 0);
-		
+	*/	
 
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
@@ -230,7 +209,7 @@ int main() {
 			glClearColor(1.f, 1.f, 1.f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+			/*
 			// Bind Textures using texture units
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture1ID);
@@ -238,6 +217,7 @@ int main() {
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, texture2ID);
 			glUniform1i(glGetUniformLocation(myShader.Program, "Texture2"), 1);
+			*/
 
 			//Activamos shader
 			myShader.USE();
@@ -263,6 +243,7 @@ int main() {
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 			glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
+			/*
 			//los 10 cubos sus matrices de modelo
 			for (int i = 0; i < 10;i++) {
 				//la matriz de modelo
@@ -281,7 +262,7 @@ int main() {
 				glBindVertexArray(0);
 			}
 
-			
+			*/
 			//eventos
 			glfwPollEvents();
 
@@ -289,6 +270,7 @@ int main() {
 			glfwSwapBuffers(window);
 		
 	}
+	/*
 	//liberar memoria texturas
 	glDeleteTextures(1, &texture1ID);
 	glDeleteTextures(1, &texture2ID);
@@ -296,7 +278,7 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-
+	*/
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
@@ -318,105 +300,14 @@ mat4 GenerateModelMatrix(bool automatico, vec3 startingPos) {
 	return temp;
 
 }
-/*
-mat4 lookAtMe(vec3 pos, vec3 target, vec3 worldUp) {
-	vec3 cameraF = normalize(pos - target); //pq asi y no al reves
-	vec3 cameraR = cross(vec3(0, 1, 0), cameraF); 
-	vec3 cameraU = cross(cameraF, cameraR);
-	
-	mat4 inversePos;
-	inversePos[3][0] = -pos.x; // Third column, first row
-	inversePos[3][1] = -pos.y;
-	inversePos[3][2] = -pos.z;
-	mat4 lookAt;
-	lookAt[0][0] = cameraR.x;
-	lookAt[1][0] = cameraR.y;
-	lookAt[2][0] = cameraR.z;
-	lookAt[0][1] = cameraU.x;
-	lookAt[1][1] = cameraU.y;
-	lookAt[2][1] = cameraU.z;
-	lookAt[0][2] = cameraF.x;
-	lookAt[1][2] = cameraF.y;
-	lookAt[2][2] = cameraF.z;
 
-	
-	return lookAt*inversePos;
-}
-*/
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);	
-	if (key == GLFW_KEY_W && action == GLFW_PRESS)
-		WIREFRAME = !WIREFRAME;
-	if (key == GLFW_KEY_1 && tantoXCiento+0.02 <= 1)
-		tantoXCiento += 0.02;
-	if (key == GLFW_KEY_2 && tantoXCiento-0.02 >= 0)
-		tantoXCiento -= 0.02;
-	if (key == GLFW_KEY_UP)
-		Yrot += 5;
-	if (key == GLFW_KEY_DOWN)
-		Yrot -= 5;
-	if (key == GLFW_KEY_RIGHT)
-		Xrot += 5;
-	if (key == GLFW_KEY_LEFT)
-		Xrot -= 5;
-		
+			
 }
-/*
-void doMovement(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_W))
-		cameraPos += cameraSpeed * cameraFront * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_S))
-		cameraPos -= cameraSpeed * cameraFront * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_A))
-		cameraPos -= cross(cameraFront, cameraUp) * cameraSpeed * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_D))
-		cameraPos += cross(cameraFront, cameraUp) * cameraSpeed * deltaTime;
-}*/
-/*
-void MouseMove(GLFWwindow* window, double xpos, double ypos) {
-	//si es la primera vez hacemos esto para que no salte de golpe
-	if (primeritaVez)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		primeritaVez = false;
-	}
 
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	GLfloat sensitivity = 0.04;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	myYaw += xoffset;
-	myPitch += yoffset;
-
-	//dejar un maximo de 180 grados de libertad horizontalmente
-	if (myPitch > 89.0f)
-		myPitch = 89.0f;
-	if (myPitch < -89.0f)
-		myPitch = -89.0f;
-
-	vec3 camF;
-	camF.x = cos (radians(myYaw)) * cos(radians(myPitch));
-	camF.y = sin(radians(myPitch));
-	camF.z = sin(radians(myYaw)) * cos(radians(myPitch));
-	cameraFront = normalize(camF);
-}*/
-/*
-void MouseScroll(GLFWwindow* window, double xScroll, double yScroll) {
-	if (fov >= 1.0f && fov <= 45.0f) //pq al llegar al maximo se gira
-		fov -= yScroll/5;
-	if (fov <= 1.0f)
-		fov = 1.0f;
-	if (fov >= 45.0f)
-		fov = 45.0f;
-}*/
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	myCamera.MouseMove(window, xpos, ypos);
 }
