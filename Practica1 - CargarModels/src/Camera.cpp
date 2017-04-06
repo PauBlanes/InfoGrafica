@@ -62,7 +62,6 @@ void Camera::MouseMove(GLFWwindow* window, double xpos, double ypos) {
 
 void Camera::MouseScroll(GLFWwindow* window, double xScroll, double yScroll) {
 
-	cout << myFov << endl;
 	myFov = clamp((float)(myFov - yScroll), 1.f, 120.f);
 }
 

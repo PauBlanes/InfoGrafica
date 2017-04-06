@@ -209,80 +209,61 @@ int main() {
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
 	{
+		
+		//Activar culling
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
 			
-			//limpiar
-			glClearColor(1.f, 1.f, 1.f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//limpiar
+		glClearColor(1.f, 1.f, 1.f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
-			//Activamos shader
-			myShader.USE();
+		//Activamos shader
+		myShader.USE();
 
-			//la textura
-			GLfloat variableShader = glGetUniformLocation(myShader.Program, "factor");
-			glUniform1f(variableShader, tantoXCiento);
-
-			
-
-			//moure
-			myCamera.DoMovement(window);
-
-			// Las matrices
-			mat4 model;
-			mat4 view;
-			mat4 projection;
+		//la textura
+		GLfloat variableShader = glGetUniformLocation(myShader.Program, "factor");
+		glUniform1f(variableShader, tantoXCiento);
 
 			
-			view = myCamera.LookAt();		
-			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f); 
-			//lo pasamos al shader
-			GLint viewLoc = glGetUniformLocation(myShader.Program, "view");
-			GLint projLoc = glGetUniformLocation(myShader.Program, "projection");
-			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-			glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-			model = translate(model, vec3(0.0f, 0.0f, -2.0f)); // Translate it down a bit so it's at the center of the scene
-			model = scale(model, vec3(0.1f, 0.1f, 0.1f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(myShader.Program, "model"), 1, GL_FALSE, value_ptr(model));
+		//moure
+		myCamera.DoMovement(window);
+
+		// Las matrices
+		mat4 model;
+		mat4 view;
+		mat4 projection;
+
+		model = translate(model, vec3(0.0f, 0.0f, -2.0f)); // Translate it down a bit so it's at the center of the scene
+		model = scale(model, vec3(0.1f, 0.1f, 0.1f)); // Translate it down a bit so it's at the center of the scene	
+		view = myCamera.LookAt();		
+		projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f); 
+		//lo pasamos al shader
+		GLint viewLoc = glGetUniformLocation(myShader.Program, "view");
+		GLint projLoc = glGetUniformLocation(myShader.Program, "projection");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(glGetUniformLocation(myShader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 						
-			//Pintar
-			modelo.Draw(myShader, GL_FILL);
+		//Pintar
+		modelo.Draw(myShader, GL_FILL);
 
-			//eventos
-			glfwPollEvents();
+		//eventos
+		glfwPollEvents();
 
-			// Swappear buffer
-			glfwSwapBuffers(window);
+		//desactivar culling
+		glDisable(GL_CULL_FACE);
+
+		// Swappear buffer
+		glfwSwapBuffers(window);
 		
 	}
-	/*
-	//liberar memoria texturas
-	glDeleteTextures(1, &texture1ID);
-	glDeleteTextures(1, &texture2ID);
-	// liberar la memoria de los VAO, EBO y VBO
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
-	*/
+	
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-}
-
-
-
-mat4 GenerateModelMatrix(bool automatico, vec3 startingPos) {
-	mat4 temp;
-	temp = translate(temp, startingPos);
-	if (!automatico) {
-		temp = rotate(temp, radians(Xrot), vec3(0.f, 1.f, 0.0f));
-		temp = rotate(temp, radians(Yrot), vec3(1.f, 0.f, 0.0f));
-	}
-	else {
-		temp = rotate(temp, (GLfloat)glfwGetTime() * 0.1f, vec3(0.f, 1.f, 0.0f));
-		temp = rotate(temp, (GLfloat)glfwGetTime() * 0.1f, vec3(1.f, 0.f, 0.0f));
-	}
-	return temp;
-
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
