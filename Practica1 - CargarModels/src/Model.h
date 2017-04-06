@@ -7,14 +7,11 @@
 using namespace std;
 // GL Includes
 #include <GL/glew.h> 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
 #include <SOIL.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "myShader.h"
 #include "Mesh.h"
 
 class Model {

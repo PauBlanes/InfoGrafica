@@ -10,6 +10,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include "Camera.h"
+#include "Model.h"
 
 using namespace std;
 using namespace glm;
@@ -79,6 +80,10 @@ int main() {
 	//cargamos los shader
 	Shader myShader ("./src/3DVertex.vertexshader", "./src/3DFragment.fragmentshader");	
 
+	//Modelos
+	Model modelo("./src/spider/spider.obj");
+	
+	
 	//VAOVBOANTIGUOS
 	/*
 	GLfloat VertexBufferCube[] = {
@@ -208,17 +213,7 @@ int main() {
 			//limpiar
 			glClearColor(1.f, 1.f, 1.f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			/*
-			// Bind Textures using texture units
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture1ID);
-			glUniform1i(glGetUniformLocation(myShader.Program, "Texture1"), 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, texture2ID);
-			glUniform1i(glGetUniformLocation(myShader.Program, "Texture2"), 1);
-			*/
-
+			
 			//Activamos shader
 			myShader.USE();
 
@@ -226,6 +221,7 @@ int main() {
 			GLfloat variableShader = glGetUniformLocation(myShader.Program, "factor");
 			glUniform1f(variableShader, tantoXCiento);
 
+			
 
 			//moure
 			myCamera.DoMovement(window);
@@ -234,6 +230,7 @@ int main() {
 			mat4 model;
 			mat4 view;
 			mat4 projection;
+
 			
 			view = myCamera.LookAt();		
 			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f); 
@@ -243,26 +240,13 @@ int main() {
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 			glUniformMatrix4fv(projLoc, 1, GL_FALSE, value_ptr(projection));
 
-			/*
-			//los 10 cubos sus matrices de modelo
-			for (int i = 0; i < 10;i++) {
-				//la matriz de modelo
-				if (i == 0)
-					model = GenerateModelMatrix(false, CubesPositionBuffer[i]);
-				else
-					model = GenerateModelMatrix(true, CubesPositionBuffer[i]);
+			model = translate(model, vec3(0.0f, 0.0f, -2.0f)); // Translate it down a bit so it's at the center of the scene
+			model = scale(model, vec3(0.1f, 0.1f, 0.1f)); // Translate it down a bit so it's at the center of the scene
+			glUniformMatrix4fv(glGetUniformLocation(myShader.Program, "model"), 1, GL_FALSE, value_ptr(model));
+						
+			//Pintar
+			modelo.Draw(myShader, GL_FILL);
 
-				// Lo pasamos al shader
-				GLint modelLoc = glGetUniformLocation(myShader.Program, "model");
-				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-
-				// Pintar
-				glBindVertexArray(VAO);
-				glDrawArrays(GL_TRIANGLES, 0, 36);
-				glBindVertexArray(0);
-			}
-
-			*/
 			//eventos
 			glfwPollEvents();
 
