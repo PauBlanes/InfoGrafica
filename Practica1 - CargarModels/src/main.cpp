@@ -85,8 +85,8 @@ int main() {
 
 	//Modelos
 	Model modelo1("./src/Models/spider/spider.obj");
-	Model modelo2("./src/Models/Toilet/Toilet.obj");
-	Model modelo3("./src/Models/tableandchair/tableandchair.obj");
+	//Model modelo2("./src/Models/Toilet/Toilet.obj");
+	//Model modelo3("./src/Models/tableandchair/tableandchair.fbx");
 	
 
 	//bucle de dibujado
@@ -107,9 +107,7 @@ int main() {
 
 		//la textura
 		GLfloat variableShader = glGetUniformLocation(myShader.Program, "factor");
-		glUniform1f(variableShader, tantoXCiento);
-
-			
+		glUniform1f(variableShader, tantoXCiento);			
 
 		//moure
 		myCamera.DoMovement(window);
@@ -131,12 +129,12 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(myShader.Program, "model"), 1, GL_FALSE, value_ptr(model));
 						
 		//Pintar
-		if (whatToLoad == 1)
+		//if (whatToLoad == 1)
 			modelo1.Draw(myShader, GL_FILL);
-		else if (whatToLoad == 2)
-			modelo2.Draw(myShader, GL_FILL);
-		else if (whatToLoad == 3)
-			modelo3.Draw(myShader, GL_FILL);
+		//else if (whatToLoad == 2)
+			//modelo2.Draw(myShader, GL_FILL);
+		//else if (whatToLoad == 3)
+			//modelo3.Draw(myShader, GL_FILL);
 
 		//eventos
 		glfwPollEvents();
