@@ -3,7 +3,7 @@
 #include<glm.hpp>
 #include <gtc\matrix_transform.hpp>
 using namespace glm;
-#include "Shader.h"
+#include "myShader.h"
 
 class Object{
 	
