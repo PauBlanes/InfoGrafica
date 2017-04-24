@@ -12,24 +12,24 @@ uniform vec3 viewPos;
 
 void main()
 {
-     // Ambient
+    // Ambient
     float ambientStrength = 0.3f;
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = ambientStrength * lightColor; //ara el color ambient es el mateix que el de la lampara
 
     // Diffuse 
     vec3 normedNorm = normalize(myNormal);
-	vec3 lightDir = normalize(lampPos - worldPos); //tiene que ser en esta direccion (luz->objecto)
-    float diff = max(dot(normedNorm, lightDir), 0.0);
+	vec3 lightDir = normalize(lampPos - worldPos); //ha de ser en aquesta direccio (fragment->llum), pq??
+    float diff = max(dot(normedNorm, lightDir), 0.0); //el cos entre els vector pq els tenim normalitzats i llavors hipotenusa es 1, no volem que sigui negatiu pq fa efectes raros
     vec3 diffuse = diff * lightColor;
 	
 	//Specular
 	float specularStrength = 0.5f;
-	vec3 viewDir = normalize(viewPos - worldPos); //el vector camera-fragmento
-	vec3 reflectDir = reflect(-lightDir, normedNorm); 
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128); //el 32 es lo concentrada que esta la luz
+	vec3 viewDir = normalize(viewPos - worldPos);
+	vec3 reflectDir = reflect(-lightDir, normedNorm); //negatiu el lightDir pq la funcio reflect l'espera en l'altre direccio
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128); //elevem el cosino entre el reflex i la camera. el numero que elevem es lo concentrat que esta el reflex
 	vec3 specular = specularStrength * spec * lightColor;
 	
 	//Final
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    color = vec4(result, 1.0f);
+    vec3 finalColor = (ambient + diffuse + specular) * objectColor;
+    color = vec4(finalColor, 1.0f);
 }

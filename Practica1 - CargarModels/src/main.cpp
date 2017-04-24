@@ -26,7 +26,7 @@ void scroll_callback(GLFWwindow* window, double xScroll, double yScroll);
 Camera myCamera (vec3(0, 0, 3), vec3(0, 0, 0), 0.04f, 45.0f);
 
 //para mover el cubo
-vec3 cubeMov(0.0f, 0.0f, -2.0f);
+vec3 cubeMov(0.0f, -0.5f, -1.5f);
 GLfloat cubeRot = 0;
 
 int main() {
@@ -80,7 +80,7 @@ int main() {
 
 	//Creamos los objectos
 	Object lamp(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -2.0f)/*el tipo de figura*/);
-	Object cubo(vec3(0.2f, 0.2f, 0.2f), vec3(0.f, 0.f, 0.f), vec3(0.0f, 0.0f, -2.0f)/*el tipo de figura*/);
+	Object cubo(vec3(0.4f, 0.4f, 0.4f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
 
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
