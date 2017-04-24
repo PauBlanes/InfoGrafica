@@ -36,4 +36,5 @@ public:
 	void MouseScroll(GLFWwindow* window, double xScroll, double yScroll);
 	mat4 LookAt();
 	GLfloat GetFOV();
+	vec3 GetPos();
 };

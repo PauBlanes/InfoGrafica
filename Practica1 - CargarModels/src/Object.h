@@ -12,12 +12,12 @@ public:
 		cube = 0,
 	};
 
-	Object(vec3 scale, vec3 rotation, vec3 position, FigureType typef);
+	Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/);
 	~Object();
 
-	void Draw(Shader shader, GLint drawMode);
+	void Draw();
 	void Move(vec3 translation);
-	void Rotate(vec3 rota);
+	void Rotate(vec3 rota, GLfloat rotationAmount);
 	void Scale(vec3 scal);
 	void Delete();
 	mat4 GetModelMatrix();
@@ -26,7 +26,8 @@ public:
 private:
 	GLuint VBO, VAO, EBO;
 	vec3 position;
-	vec3 scale;
-	vec3 rotation;	
+	vec3 escala;
+	vec3 rotationAxis;
+	GLfloat rotation;
 };
 

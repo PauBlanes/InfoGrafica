@@ -6,7 +6,7 @@ Camera::Camera(vec3 position, vec3 target, GLfloat sens, GLfloat fov) {
 	cameraUp = cross(cameraFront, cross(vec3(0, 1, 0), cameraFront));
 	sensitivity = sens;
 	myFov = fov;
-	cameraSpeed = 10.f;
+	cameraSpeed = 5.f;
 	firstMouse = true;
 	myYaw = -90.0f; //pq sino da problemas
 }
@@ -96,4 +96,8 @@ mat4 Camera::LookAt() {
 
 GLfloat Camera::GetFOV() {
 	return radians(myFov);
+}
+
+vec3 Camera::GetPos() {
+	return cameraPos;
 }

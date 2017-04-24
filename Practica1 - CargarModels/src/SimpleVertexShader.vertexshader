@@ -1,30 +1,19 @@
 #version 330 core
-layout (location = 0) in vec3 position; // The position variable has attribute position 0
-//layout (location = 1) in vec3 color; //sense utilizar color
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
 
-  
-out vec3 ourColor; // Output a color to the fragment shader
-out vec3 ourPos;
+out vec3 myNormal;
+out vec3 worldPos;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-uniform float offset;
-
-void main()
-{
-	if (position.y > 0) {
-		gl_Position = vec4(position, 1.0);		
-	}
-		
-	else {
-		if (position.x > 0)
-			gl_Position = vec4(position.x + offset,position.y,position.z, 1.0);
-		else
-			gl_Position = vec4(position.x - offset,position.y,position.z, 1.0);			
-		
-	}
-	ourColor = vec3(0.0f,1.0f,0.0f); //creem el color
-	ourPos = vec3(gl_Position.x, gl_Position.y, gl_Position.z);
+void main() {		
 	
-	
+	gl_Position = projection * view * model * vec4(position, 1.0);
+	worldPos = vec3(model * vec4(position, 1.0f)); //necessitem posicio en el mon del vertex pq fer els calculs d llum pero no ens importa la camara	
+	myNormal = mat3(transpose(inverse(model))) * normal; //para adaptar las normales a las transformaciones que hayamos hecho al objeto
 }
+
 
