@@ -19,7 +19,7 @@ void main()
     // Diffuse 
     vec3 normedNorm = normalize(myNormal);
 	vec3 lightDir = normalize(lampPos - worldPos); //ha de ser en aquesta direccio (fragment->llum), pq??
-    float diff = max(dot(normedNorm, lightDir), 0.0); //el cos entre els vector pq els tenim normalitzats i llavors hipotenusa es 1, no volem que sigui negatiu pq fa efectes raros
+    float diff = max(dot(normedNorm, lightDir), 0.0); //el cos entre vector llum i la normal.com que els tenim normalitzats i llavors hipotenusa es 1, no volem que sigui negatiu pq fa efectes raros
     vec3 diffuse = diff * lightColor;
 	
 	//Specular
