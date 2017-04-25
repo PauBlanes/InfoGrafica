@@ -19,7 +19,7 @@ const GLint WIDTH = 800, HEIGHT = 800;
 bool WIREFRAME = false;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos); 
 void scroll_callback(GLFWwindow* window, double xScroll, double yScroll);
 
 //inicializo camara
@@ -75,11 +75,11 @@ int main() {
 	
 	//cargamos los shader
 	Shader lampShader ("./src/lampVertexShader.vertexshader", "./src/lampFragmentShader.fragmentshader");
-	Shader simpleShader("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
+	Shader simpleShader("./src/FocalLightVertexShader.vertexshader", "./src/FocalLightFragmentShader.fragmentshader");
 	
 
 	//Creamos los objectos
-	Object lamp(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -2.0f)/*el tipo de figura*/);
+	Object lamp(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -1.0f)/*el tipo de figura*/);
 	Object cubo(vec3(0.4f, 0.4f, 0.4f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
 
 	//bucle de dibujado
@@ -100,15 +100,29 @@ int main() {
 		
 		simpleShader.USE();
 
-		//pasamos los uniforms para la luz
+		//pasamos los uniforms para la luz - los comunes
 		GLint objectCol = glGetUniformLocation(simpleShader.Program, "objectColor");
 		GLint lightCol = glGetUniformLocation(simpleShader.Program, "lightColor");
 		glUniform3f(objectCol, 0.5f, 1.0f, 0.31f);
-		glUniform3f(lightCol, 1.0f, 1.0f, 1.0f); // el color de la luz que es blanca
-		GLint lightPosVar = glGetUniformLocation(simpleShader.Program, "lampPos");
-		glUniform3f(lightPosVar, -0.0f, 0.3f, -2.0f);
+		glUniform3f(lightCol, 1.0f, 1.0f, 1.0f); // el color de la luz que es blanca, mismo para lampara y embiente en este caso
 		GLint viewPosVar = glGetUniformLocation(simpleShader.Program, "viewPos");
 		glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
+		//SI ES POINT LIGHT
+		//GLint lightPosVar = glGetUniformLocation(simpleShader.Program, "lampPos");
+		//glUniform3f(lightPosVar, -0.0f, 0.3f, -2.0f);
+		//SI ES DIR LIGHT
+		//GLint DirLuzVar = glGetUniformLocation(simpleShader.Program, "lightDir");
+		//glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
+		//SI ES FOCAL LIGHT
+		GLint lightPosVar = glGetUniformLocation(simpleShader.Program, "LightPos");
+		glUniform3f(lightPosVar, -0.0f, 0.3f, -1.0f);
+		GLint AperturaMax = glGetUniformLocation(simpleShader.Program, "cosAperturaMax");
+		glUniform1f(AperturaMax, cos(radians(45.f)));
+		GLint AperturaMin = glGetUniformLocation(simpleShader.Program, "cosAperturaMin");
+		glUniform1f(AperturaMin, cos(radians(25.f)));
+		GLint DirLuzVar = glGetUniformLocation(simpleShader.Program, "Fdir");
+		glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
+		
 
 		// Las matrices
 		mat4 model;
@@ -169,6 +183,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cubeMov.x += 0.1f;
 	if (key == GLFW_KEY_KP_4)
 		cubeMov.x -= 0.1f;
+	if (key == GLFW_KEY_KP_1)
+		cubeMov.z += 0.1f;
+	if (key == GLFW_KEY_KP_3)
+		cubeMov.z -= 0.1f;
 	if (key == GLFW_KEY_KP_9)
 		cubeRot += 3.f;
 	if (key == GLFW_KEY_KP_7)

@@ -13,7 +13,7 @@ void main() {
 	
 	gl_Position = projection * view * model * vec4(position, 1.0);
 	worldPos = vec3(model * vec4(position, 1.0f)); //necessitem posicio en el mon del vertex pq fer els calculs d llum pero no ens importa la camara	
-	myNormal = mat3(transpose(inverse(model))) * normal; //para adaptar las normales a las transformaciones que hayamos hecho al objeto
+	myNormal = mat3(transpose(inverse(model))) * normal; //aixi adaptem les normals a les transformacions que haguem fet en escena
 }
 
 
