@@ -101,3 +101,7 @@ GLfloat Camera::GetFOV() {
 vec3 Camera::GetPos() {
 	return cameraPos;
 }
+
+vec3 Camera::GetDir() {
+	return cameraFront;
+}

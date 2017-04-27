@@ -117,7 +117,7 @@ int main() {
 			GLint viewPosVar = glGetUniformLocation(pointShader.Program, "viewPos");
 			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
 			GLint lightPosVar = glGetUniformLocation(pointShader.Program, "lampPos");
-			glUniform3f(lightPosVar, -0.0f, 0.3f, -2.0f);
+			glUniform3f(lightPosVar,lamp.GetPosition().x, lamp.GetPosition().y, lamp.GetPosition().z);
 			GLint DirLuzVar = glGetUniformLocation(pointShader.Program, "lightDir");
 			glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
 
@@ -191,10 +191,11 @@ int main() {
 			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
 			//Pintamos el cubo		
 			cubo.Draw();
+
 		}
 		if (lightType == 3) {
 			focalShader.USE();
-
+			
 			//pasamos los uniforms para la luz
 			GLint objectCol = glGetUniformLocation(focalShader.Program, "objectColor");
 			GLint ambCol = glGetUniformLocation(focalShader.Program, "ambientColor");
@@ -207,14 +208,14 @@ int main() {
 			GLint viewPosVar = glGetUniformLocation(focalShader.Program, "viewPos");
 			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
 			GLint lightPosVar = glGetUniformLocation(focalShader.Program, "LightPos");
-			glUniform3f(lightPosVar, 0, 0, 0);
+			glUniform3f(lightPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
 			GLint AperturaMax = glGetUniformLocation(focalShader.Program, "cosAperturaMax");
 			glUniform1f(AperturaMax, cos(radians(20.f)));
 			GLint AperturaMin = glGetUniformLocation(focalShader.Program, "cosAperturaMin");
 			glUniform1f(AperturaMin, cos(radians(12.f)));
 			GLint DirLuzVar = glGetUniformLocation(focalShader.Program, "Fdir");
-			glUniform3f(DirLuzVar, 0, 0, -1);
-
+			glUniform3f(DirLuzVar, myCamera.GetDir().x, myCamera.GetDir().y, myCamera.GetDir().z);
+			
 			// Las matrices
 			mat4 model;
 			mat4 view;
@@ -233,7 +234,7 @@ int main() {
 			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
 			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
 			//Pintamos el cubo		
-			cubo.Draw();
+			cubo.Draw();			
 		}		
 		
 		//eventos

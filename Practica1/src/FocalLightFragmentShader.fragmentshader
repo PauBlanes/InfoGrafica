@@ -17,8 +17,7 @@ uniform float cosAperturaMin;
 uniform vec3 Fdir;
 
 void main()
-{	
-		
+{		
 	//ahora comprovar si esta dentro del foco
 	vec3 lightDir = normalize(Lightpos - worldPos);
 	float theta = dot(lightDir,normalize(-Fdir));
