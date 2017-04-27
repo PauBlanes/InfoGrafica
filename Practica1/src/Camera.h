@@ -17,7 +17,7 @@ using namespace glm;
 class Camera {
 private:
 	vec3 cameraPos;
-	vec3 cameraFront;
+	
 	vec3 cameraUp;
 	GLfloat cameraSpeed;
 	GLfloat deltaTime;
@@ -30,6 +30,7 @@ private:
 	GLfloat myYaw;
 	GLfloat myFov;
 public:
+	vec3 cameraFront;
 	Camera(vec3 position, vec3 target, GLfloat sens, GLfloat fov);
 	void DoMovement(GLFWwindow * window);
 	void MouseMove(GLFWwindow* window, double xpos, double ypos);

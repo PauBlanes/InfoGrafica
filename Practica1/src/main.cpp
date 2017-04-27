@@ -29,6 +29,9 @@ Camera myCamera (vec3(0, 0, 3), vec3(0, 0, 0), 0.04f, 45.0f);
 vec3 cubeMov(0.0f, -0.5f, -1.5f);
 GLfloat cubeRot = 0;
 
+//para cambiar luces
+int lightType = 1;
+
 int main() {
 	
 	//initGLFW
@@ -75,7 +78,9 @@ int main() {
 	
 	//cargamos los shader
 	Shader lampShader ("./src/lampVertexShader.vertexshader", "./src/lampFragmentShader.fragmentshader");
-	Shader simpleShader("./src/FocalLightVertexShader.vertexshader", "./src/FocalLightFragmentShader.fragmentshader");
+	Shader dirShader("./src/DirLightVertexShader.vertexshader", "./src/DirLightFragmentShader.fragmentshader");
+	Shader pointShader("./src/PointLightVertexShader.vertexshader", "./src/PointLightFragmentShader.fragmentshader");
+	Shader focalShader("./src/FocalLightVertexShader.vertexshader", "./src/FocalLightFragmentShader.fragmentshader");
 	
 
 	//Creamos los objectos
@@ -97,66 +102,139 @@ int main() {
 			
 		//moure
 		myCamera.DoMovement(window);
-		
-		simpleShader.USE();
+		if (lightType == 1) {
+			pointShader.USE();
 
-		//pasamos los uniforms para la luz - los comunes
-		GLint objectCol = glGetUniformLocation(simpleShader.Program, "objectColor");
-		GLint lightCol = glGetUniformLocation(simpleShader.Program, "lightColor");
-		glUniform3f(objectCol, 0.5f, 1.0f, 0.31f);
-		glUniform3f(lightCol, 1.0f, 1.0f, 1.0f); // el color de la luz que es blanca, mismo para lampara y embiente en este caso
-		GLint viewPosVar = glGetUniformLocation(simpleShader.Program, "viewPos");
-		glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
-		//SI ES POINT LIGHT
-		//GLint lightPosVar = glGetUniformLocation(simpleShader.Program, "lampPos");
-		//glUniform3f(lightPosVar, -0.0f, 0.3f, -2.0f);
-		//SI ES DIR LIGHT
-		//GLint DirLuzVar = glGetUniformLocation(simpleShader.Program, "lightDir");
-		//glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
-		//SI ES FOCAL LIGHT
-		GLint lightPosVar = glGetUniformLocation(simpleShader.Program, "LightPos");
-		glUniform3f(lightPosVar, -0.0f, 0.3f, -1.0f);
-		GLint AperturaMax = glGetUniformLocation(simpleShader.Program, "cosAperturaMax");
-		glUniform1f(AperturaMax, cos(radians(45.f)));
-		GLint AperturaMin = glGetUniformLocation(simpleShader.Program, "cosAperturaMin");
-		glUniform1f(AperturaMin, cos(radians(25.f)));
-		GLint DirLuzVar = glGetUniformLocation(simpleShader.Program, "Fdir");
-		glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
-		
+			//pasamos los uniforms para la luz
+			GLint objectCol = glGetUniformLocation(pointShader.Program, "objectColor");
+			GLint ambCol = glGetUniformLocation(pointShader.Program, "ambientColor");
+			GLint diffCol = glGetUniformLocation(pointShader.Program, "diffuseColor");
+			GLint specCol = glGetUniformLocation(pointShader.Program, "specularColor");
+			glUniform3f(objectCol, 0.372549, 0.619608, 0.627451);
+			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
+			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
+			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
+			GLint viewPosVar = glGetUniformLocation(pointShader.Program, "viewPos");
+			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
+			GLint lightPosVar = glGetUniformLocation(pointShader.Program, "lampPos");
+			glUniform3f(lightPosVar, -0.0f, 0.3f, -2.0f);
+			GLint DirLuzVar = glGetUniformLocation(pointShader.Program, "lightDir");
+			glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
 
-		// Las matrices
-		mat4 model;
-		mat4 view;
-		mat4 projection;
+			// Las matrices
+			mat4 model;
+			mat4 view;
+			mat4 projection;
 
-		cubo.Move(cubeMov);
-		cubo.Rotate(vec3 (0.f,1.f,0.f),cubeRot);
-		model = cubo.GetModelMatrix(); 
-		view = myCamera.LookAt();
-		projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-		//lo pasamos al shader
-		GLint modelMatVar = glGetUniformLocation(simpleShader.Program, "model");
-		GLint viewMatVar = glGetUniformLocation(simpleShader.Program, "view");
-		GLint projMatVar = glGetUniformLocation(simpleShader.Program, "projection");
-		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
-		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
-		//Pintamos el cubo		
-		cubo.Draw();
-		
-		//Usamos el shader del cubo lampara
-		lampShader.USE();
-		// Las matrices
-		model = lamp.GetModelMatrix();
-		//las pasamos al shader
-		modelMatVar = glGetUniformLocation(lampShader.Program, "model");
-		viewMatVar = glGetUniformLocation(lampShader.Program, "view");
-		projMatVar = glGetUniformLocation(lampShader.Program, "projection");
-		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
-		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
-		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
-		//Pintamos ya el cubo lampara
-		lamp.Draw();
+			cubo.Move(cubeMov);
+			cubo.Rotate(vec3(0.f, 1.f, 0.f), cubeRot);
+			model = cubo.GetModelMatrix();
+			view = myCamera.LookAt();
+			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+			//lo pasamos al shader
+			GLint modelMatVar = glGetUniformLocation(pointShader.Program, "model");
+			GLint viewMatVar = glGetUniformLocation(pointShader.Program, "view");
+			GLint projMatVar = glGetUniformLocation(pointShader.Program, "projection");
+			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+			//Pintamos el cubo		
+			cubo.Draw();
+
+			//Usamos el shader del cubo lampara
+			lampShader.USE();
+			// Las matrices
+			model = lamp.GetModelMatrix();
+			//las pasamos al shader
+			modelMatVar = glGetUniformLocation(lampShader.Program, "model");
+			viewMatVar = glGetUniformLocation(lampShader.Program, "view");
+			projMatVar = glGetUniformLocation(lampShader.Program, "projection");
+			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+			//Pintamos ya el cubo lampara
+			lamp.Draw();
+		}
+		if (lightType == 2) {
+			dirShader.USE();
+
+			//pasamos los uniforms para la luz
+			GLint objectCol = glGetUniformLocation(dirShader.Program, "objectColor");
+			GLint ambCol = glGetUniformLocation(dirShader.Program, "ambientColor");
+			GLint diffCol = glGetUniformLocation(dirShader.Program, "diffuseColor");
+			GLint specCol = glGetUniformLocation(dirShader.Program, "specularColor");
+			glUniform3f(objectCol, 0.372549, 0.619608, 0.627451);
+			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
+			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
+			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
+			GLint viewPosVar = glGetUniformLocation(dirShader.Program, "viewPos");
+			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
+			GLint DirLuzVar = glGetUniformLocation(dirShader.Program, "lightDir");
+			glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
+						
+			// Las matrices
+			mat4 model;
+			mat4 view;
+			mat4 projection;
+
+			cubo.Move(cubeMov);
+			cubo.Rotate(vec3(0.f, 1.f, 0.f), cubeRot);
+			model = cubo.GetModelMatrix();
+			view = myCamera.LookAt();
+			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+			//lo pasamos al shader
+			GLint modelMatVar = glGetUniformLocation(dirShader.Program, "model");
+			GLint viewMatVar = glGetUniformLocation(dirShader.Program, "view");
+			GLint projMatVar = glGetUniformLocation(dirShader.Program, "projection");
+			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+			//Pintamos el cubo		
+			cubo.Draw();
+		}
+		if (lightType == 3) {
+			focalShader.USE();
+
+			//pasamos los uniforms para la luz
+			GLint objectCol = glGetUniformLocation(focalShader.Program, "objectColor");
+			GLint ambCol = glGetUniformLocation(focalShader.Program, "ambientColor");
+			GLint diffCol = glGetUniformLocation(focalShader.Program, "diffuseColor");
+			GLint specCol = glGetUniformLocation(focalShader.Program, "specularColor");
+			glUniform3f(objectCol, 0.372549, 0.619608, 0.627451);
+			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
+			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
+			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
+			GLint viewPosVar = glGetUniformLocation(focalShader.Program, "viewPos");
+			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
+			GLint lightPosVar = glGetUniformLocation(focalShader.Program, "LightPos");
+			glUniform3f(lightPosVar, 0, 0, 0);
+			GLint AperturaMax = glGetUniformLocation(focalShader.Program, "cosAperturaMax");
+			glUniform1f(AperturaMax, cos(radians(20.f)));
+			GLint AperturaMin = glGetUniformLocation(focalShader.Program, "cosAperturaMin");
+			glUniform1f(AperturaMin, cos(radians(12.f)));
+			GLint DirLuzVar = glGetUniformLocation(focalShader.Program, "Fdir");
+			glUniform3f(DirLuzVar, 0, 0, -1);
+
+			// Las matrices
+			mat4 model;
+			mat4 view;
+			mat4 projection;
+
+			cubo.Move(cubeMov);
+			cubo.Rotate(vec3(0.f, 1.f, 0.f), cubeRot);
+			model = cubo.GetModelMatrix();
+			view = myCamera.LookAt();
+			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+			//lo pasamos al shader
+			GLint modelMatVar = glGetUniformLocation(focalShader.Program, "model");
+			GLint viewMatVar = glGetUniformLocation(focalShader.Program, "view");
+			GLint projMatVar = glGetUniformLocation(focalShader.Program, "projection");
+			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+			//Pintamos el cubo		
+			cubo.Draw();
+		}		
 		
 		//eventos
 		glfwPollEvents();
@@ -191,6 +269,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cubeRot += 3.f;
 	if (key == GLFW_KEY_KP_7)
 		cubeRot -= 3.f;
+	if (key == GLFW_KEY_1)
+		lightType = 1;
+	if (key == GLFW_KEY_2)
+		lightType = 2;
+	if (key == GLFW_KEY_3)
+		lightType = 3;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }

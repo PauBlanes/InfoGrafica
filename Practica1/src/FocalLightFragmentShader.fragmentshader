@@ -6,7 +6,9 @@ in vec3 worldPos;
 out vec4 color;
 
 uniform vec3 objectColor;  
-uniform vec3 lightColor;
+uniform vec3 ambientColor;
+uniform vec3 diffuseColor;
+uniform vec3 specularColor;
 uniform vec3 viewPos;
 
 uniform vec3 Lightpos;
@@ -16,43 +18,45 @@ uniform vec3 Fdir;
 
 void main()
 {	
-	// Ambient que la hago siempre
-    float ambientStrength = 0.3f;
-    vec3 ambient = ambientStrength * lightColor; //ara el color ambient es el mateix que el de la lampara
-	
+		
 	//ahora comprovar si esta dentro del foco
 	vec3 lightDir = normalize(Lightpos - worldPos);
-	float cosenoLuzFoco = dot(normalize(-Fdir),lightDir);
+	float theta = dot(lightDir,normalize(-Fdir));
 	
-	if (cosenoLuzFoco > cosAperturaMax) { //estara dentro
-		// Diffuse 
-		vec3 normedNorm = normalize(myNormal);
-		float diff = max(dot(normedNorm, lightDir), 0.0); //el cos entre vector llum i la normal.com que els tenim normalitzats i llavors hipotenusa es 1, no volem que sigui negatiu pq fa efectes raros
-		vec3 diffuse = diff * lightColor;
-		
-		//Specular
-		//float specularStrength = 0.5f;
-		//vec3 viewDir = normalize(viewPos - worldPos);
-		//vec3 reflectDir = reflect(-lightDir, normedNorm); //negatiu el lightDir pq la funcio reflect l'espera en l'altre direccio
-		//float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128); //elevem el cos entre el reflex i la camera. el numero que elevem es lo concentrat que esta el reflex
-		//vec3 specular = specularStrength * spec * lightColor;
-		
-		//La intensidad dentro del foco
-		//float epsilon = cosAperturaMin - cosAperturaMax;
-		//float inte = clamp((cosenoLuzFoco-cosAperturaMax)/epsilon);
-		
-		//Atenuation
-		//float d = length(Lightpos - worldPos);
-		//float fatt = 1/(1+0.22*d+(0.2*pow(d,2)));
-		
-		//Final
-		vec3 finalColor =  (ambient + diffuse ) * objectColor;
-		color = vec4(finalColor, 1.0f);
+	if (theta > cosAperturaMax) { //estara dentro
+		// Ambient
+        vec3 ambient = ambientColor * objectColor;
+        
+        // Diffuse 
+        vec3 norm = normalize(myNormal);        
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diffuseColor * diff * objectColor;  
+        
+        // Specular
+        vec3 viewDir = normalize(viewPos - worldPos);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+        vec3 specular = specularColor * spec * objectColor;
+        
+		//intensidad dentro
+		float epsilon   = cosAperturaMin - cosAperturaMax;
+		float intensity = clamp((theta - cosAperturaMax) / epsilon, 0.0, 1.0); 
+		diffuse  *= intensity;
+		specular *= intensity;
+
+        // Attenuation
+        float d  = length(Lightpos - worldPos);
+        float att = 1.0f / (1+0.22*d+(0.2*pow(d,2)));    
+
+        diffuse  *= att;
+        specular *= att;   
+                
+        color = vec4(ambient + diffuse + specular, 1.0f); 
 	}
-	//else {
-		vec3 finalColor = ambient * objectColor;
-		color = vec4(finalColor, 1.0f);
-	
+	else {
+		vec3 ambient = ambientColor * objectColor;
+		color = vec4(ambient, 1.0f);
+	}
 	
     
 }
