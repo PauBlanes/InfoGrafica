@@ -1,11 +1,18 @@
 #version 330 core
 
+struct Material {
+    sampler2D diffuse;
+    sampler2D specular;
+    float     shininess;
+};
+  
 in vec3 myNormal;
 in vec3 worldPos;
+in vec2 TextCoords;
 
 out vec4 color;
 
-uniform vec3 objectColor;  
+uniform Material myMat;
 uniform vec3 ambientColor;
 uniform vec3 diffuseColor;
 uniform vec3 specularColor;
@@ -18,26 +25,26 @@ void main()
 {
     // Ambient
     float ambientStrength = 0.3f;
-    vec3 ambient = ambientStrength * ambientColor; //ara el color ambient es el mateix que el de la lampara
+    vec3 ambient = ambientStrength * ambientColor * vec3(texture(myMat.diffuse, TextCoords));
 
     // Diffuse 
     vec3 normedNorm = normalize(myNormal);
 	vec3 lightDir = normalize(lampPos - worldPos); 
     float diff = max(dot(normedNorm, lightDir), 0.0); //el cos entre vector llum i la normal.com que els tenim normalitzats i llavors hipotenusa es 1, no volem que sigui negatiu pq fa efectes raros
-    vec3 diffuse = diff * diffuseColor;
+    vec3 diffuse = diff * diffuseColor * vec3(texture(myMat.diffuse, TextCoords));
 	
 	//Specular
 	float specularStrength = 0.9f;
 	vec3 viewDir = normalize(viewPos - worldPos);
 	vec3 reflectDir = reflect(-lightDir, normedNorm); //negatiu el lightDir pq la funcio reflect l'espera en l'altre direccio
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128); //elevem el cosino entre el reflex i la camera. el numero que elevem es lo concentrat que esta el reflex
-	vec3 specular = specularStrength * spec * specularColor;
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), myMat.shininess); //elevem el cosino entre el reflex i la camera. el numero que elevem es lo concentrat que esta el reflex
+	vec3 specular = specularStrength * spec * specularColor * vec3(texture(myMat.specular, TextCoords));
 	
 	//Atenuation
 	float d = length(lampPos - worldPos);
-	float fatt = 1/(1+0.22*d+(0.2*pow(d,2)));
+	float fatt = 1.0f / (1+0.09*d+(0.032*pow(d,2)));
 	
 	//Final
-    vec3 finalColor = fatt * (ambient + diffuse + specular) * objectColor;
+    vec3 finalColor = fatt * (ambient + diffuse + specular);
     color = vec4(finalColor, 1.0f);
 }

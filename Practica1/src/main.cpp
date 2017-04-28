@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Object.h"
+#include "material.h"
 
 using namespace std;
 using namespace glm;
@@ -85,7 +86,10 @@ int main() {
 
 	//Creamos los objectos
 	Object lamp(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -1.0f)/*el tipo de figura*/);
-	Object cubo(vec3(0.4f, 0.4f, 0.4f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
+	Object cubo(vec3(0.8f, 0.8f, 0.8f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
+
+	Material mat1("./src/Materials/difuso.png", "./src/Materials/especular.png",128);
+	mat1.ActivateTextures();
 
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
@@ -103,14 +107,17 @@ int main() {
 		//moure
 		myCamera.DoMovement(window);
 		if (lightType == 1) {
+			
 			pointShader.USE();
 
+			//Uniforms para los materiales
+			mat1.SetMaterial(&pointShader);
+			mat1.SetShininess(&pointShader);
+		
 			//pasamos los uniforms para la luz
-			GLint objectCol = glGetUniformLocation(pointShader.Program, "objectColor");
 			GLint ambCol = glGetUniformLocation(pointShader.Program, "ambientColor");
 			GLint diffCol = glGetUniformLocation(pointShader.Program, "diffuseColor");
 			GLint specCol = glGetUniformLocation(pointShader.Program, "specularColor");
-			glUniform3f(objectCol, 0.372549, 0.619608, 0.627451);
 			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
 			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
 			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
@@ -158,12 +165,14 @@ int main() {
 		if (lightType == 2) {
 			dirShader.USE();
 
+			//Uniforms para los materiales
+			mat1.SetMaterial(&dirShader);
+			mat1.SetShininess(&dirShader);
+
 			//pasamos los uniforms para la luz
-			GLint objectCol = glGetUniformLocation(dirShader.Program, "objectColor");
 			GLint ambCol = glGetUniformLocation(dirShader.Program, "ambientColor");
 			GLint diffCol = glGetUniformLocation(dirShader.Program, "diffuseColor");
 			GLint specCol = glGetUniformLocation(dirShader.Program, "specularColor");
-			glUniform3f(objectCol, 0.372549, 0.619608, 0.627451);
 			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
 			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
 			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
@@ -196,6 +205,10 @@ int main() {
 		if (lightType == 3) {
 			focalShader.USE();
 			
+			//Uniforms para los materiales
+			mat1.SetMaterial(&focalShader);
+			mat1.SetShininess(&focalShader);
+
 			//pasamos los uniforms para la luz
 			GLint objectCol = glGetUniformLocation(focalShader.Program, "objectColor");
 			GLint ambCol = glGetUniformLocation(focalShader.Program, "ambientColor");
@@ -207,15 +220,15 @@ int main() {
 			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
 			GLint viewPosVar = glGetUniformLocation(focalShader.Program, "viewPos");
 			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
-			GLint lightPosVar = glGetUniformLocation(focalShader.Program, "LightPos");
+			GLint lightPosVar = glGetUniformLocation(focalShader.Program, "lightPos");
 			glUniform3f(lightPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
 			GLint AperturaMax = glGetUniformLocation(focalShader.Program, "cosAperturaMax");
-			glUniform1f(AperturaMax, cos(radians(20.f)));
+			glUniform1f(AperturaMax, cos(radians(15.f)));
 			GLint AperturaMin = glGetUniformLocation(focalShader.Program, "cosAperturaMin");
-			glUniform1f(AperturaMin, cos(radians(12.f)));
+			glUniform1f(AperturaMin, cos(radians(10.f)));
 			GLint DirLuzVar = glGetUniformLocation(focalShader.Program, "Fdir");
 			glUniform3f(DirLuzVar, myCamera.GetDir().x, myCamera.GetDir().y, myCamera.GetDir().z);
-			
+						
 			// Las matrices
 			mat4 model;
 			mat4 view;

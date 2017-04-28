@@ -4,49 +4,47 @@ Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
 	
 	GLfloat VertexBufferObject[]= {
 		//front
-		1.0f ,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
-		1.0f , -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
-		-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
-		1.0f ,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		0.5f ,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
 		//back
-		-1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		1.0f , -1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		1.0f ,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 
-
-		1.0f ,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		-1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		//left
-		-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 
-		-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
-		-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
-		-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
-		-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,
-		-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		//left	
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 		//right
-		1.0f , -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
-		1.0f ,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
-		1.0f ,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 
-
-		1.0f ,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-		1.0f , -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-		1.0f , -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
 		//down
-		-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 
-		1.0f , -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,
-		1.0f , -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,
-		1.0f , -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,
-		-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,
-		-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 		//up
-		1.0f ,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		1.0f ,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 
-		-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		1.0f ,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f
 	};
 	//igualar la pos, escala, rot
 	position = pos;
@@ -63,10 +61,12 @@ Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
 		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_STATIC_DRAW);
 
 		//Establecer las propiedades de los vertices
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)0);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)0);
+		glEnableVertexAttribArray(0); //posicion
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(1); //color
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(6 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(2); //Textura
 		
 		//liberar el buffer
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
