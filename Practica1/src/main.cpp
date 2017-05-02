@@ -13,6 +13,7 @@
 #include "Model.h"
 #include "Object.h"
 #include "material.h"
+#include "Light.h"
 
 using namespace std;
 using namespace glm;
@@ -82,14 +83,27 @@ int main() {
 	Shader dirShader("./src/DirLightVertexShader.vertexshader", "./src/DirLightFragmentShader.fragmentshader");
 	Shader pointShader("./src/PointLightVertexShader.vertexshader", "./src/PointLightFragmentShader.fragmentshader");
 	Shader focalShader("./src/FocalLightVertexShader.vertexshader", "./src/FocalLightFragmentShader.fragmentshader");
+	Shader fullShader("./src/VertexShaderPhongTexture.vs", "./src/FragmentShaderPhongTexture.fs");
 	
 
-	//Creamos los objectos
-	Object lamp(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -1.0f)/*el tipo de figura*/);
-	Object cubo(vec3(0.8f, 0.8f, 0.8f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
-
-	Material mat1("./src/Materials/difuso.png", "./src/Materials/especular.png",128);
+	//Creamos materiales
+	Material mat1("./src/Materials/difuso.png", "./src/Materials/especular.png",32);
 	mat1.ActivateTextures();
+
+	//Creamos luces
+	Light pointLight1(vec3(-0.0f, 0.7f, -1.0f), vec3(0), vec3(.8f, 0.8f, 0.8f), vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), Light::POINT, 0);
+	pointLight1.SetAtt(1, 0.09,0.032);
+	Light pointLight2(vec3(5.f, 0.7f, -1.0f), vec3(0), vec3(.8f, 0.8f, 0.8f), vec3(0.f, 1.0f, 0.f), vec3(0.f, 1.0f, 0.f), Light::POINT, 1);
+	pointLight2.SetAtt(1, 0.09, 0.032);
+	Light sLight1(vec3(10.f, 0.7f, -1.5f), vec3(0,-1,0), vec3(.8f, 0.8f, 0.8f), vec3(0.f, 1.0f, 0.f), vec3(0.f, 1.0f, 0.f), Light::SPOT, 0);
+	sLight1.SetAtt(1, 0.09, 0.032);
+	sLight1.SetAperture(cos(radians(25.f)), cos(radians(10.f)));
+
+	//Creamos los objectos
+	Object lamp1(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(-0.0f, 0.7f, -1.0f)/*el tipo de figura*/); //es Object::TIPO
+	Object lamp2(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(5.f, 0.7f, -1.0f)/*el tipo de figura*/); //es Object::TIPO
+	Object lamp3(vec3(0.1f, 0.1f, 0.1f), vec3(0.f, 0.f, 0.f), vec3(10.f, 0.7f, -1.5f)/*el tipo de figura*/); //es Object::TIPO
+	Object cubo(vec3(0.8f, 0.8f, 0.8f), vec3(0.f, 0.f, 0.f), vec3(0.0f, -0.5f, -1.0f)/*el tipo de figura*/);
 
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
@@ -106,62 +120,81 @@ int main() {
 			
 		//moure
 		myCamera.DoMovement(window);
-		if (lightType == 1) {
-			
-			pointShader.USE();
-
-			//Uniforms para los materiales
-			mat1.SetMaterial(&pointShader);
-			mat1.SetShininess(&pointShader);
 		
-			//pasamos los uniforms para la luz
-			GLint ambCol = glGetUniformLocation(pointShader.Program, "ambientColor");
-			GLint diffCol = glGetUniformLocation(pointShader.Program, "diffuseColor");
-			GLint specCol = glGetUniformLocation(pointShader.Program, "specularColor");
-			glUniform3f(ambCol, .8f, 0.8f, 0.8f);
-			glUniform3f(diffCol, 1.0f, 1.0f, 1.0f);
-			glUniform3f(specCol, 1.0f, 1.0f, 1.0f);
-			GLint viewPosVar = glGetUniformLocation(pointShader.Program, "viewPos");
-			glUniform3f(viewPosVar, myCamera.GetPos().x, myCamera.GetPos().y, myCamera.GetPos().z);
-			GLint lightPosVar = glGetUniformLocation(pointShader.Program, "lampPos");
-			glUniform3f(lightPosVar,lamp.GetPosition().x, lamp.GetPosition().y, lamp.GetPosition().z);
-			GLint DirLuzVar = glGetUniformLocation(pointShader.Program, "lightDir");
-			glUniform3f(DirLuzVar, 0.0f, -1.0f, 0.0f);
 
-			// Las matrices
-			mat4 model;
-			mat4 view;
-			mat4 projection;
+		fullShader.USE();
 
-			cubo.Move(cubeMov);
-			cubo.Rotate(vec3(0.f, 1.f, 0.f), cubeRot);
-			model = cubo.GetModelMatrix();
-			view = myCamera.LookAt();
-			projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
-			//lo pasamos al shader
-			GLint modelMatVar = glGetUniformLocation(pointShader.Program, "model");
-			GLint viewMatVar = glGetUniformLocation(pointShader.Program, "view");
-			GLint projMatVar = glGetUniformLocation(pointShader.Program, "projection");
-			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
-			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
-			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
-			//Pintamos el cubo		
-			cubo.Draw();
+		//uniforms para los materiales
+		mat1.SetMaterial(&fullShader);
+		mat1.SetShininess(&fullShader);
 
-			//Usamos el shader del cubo lampara
-			lampShader.USE();
-			// Las matrices
-			model = lamp.GetModelMatrix();
-			//las pasamos al shader
-			modelMatVar = glGetUniformLocation(lampShader.Program, "model");
-			viewMatVar = glGetUniformLocation(lampShader.Program, "view");
-			projMatVar = glGetUniformLocation(lampShader.Program, "projection");
-			glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
-			glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
-			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
-			//Pintamos ya el cubo lampara
-			lamp.Draw();
-		}
+		//Activar luz
+		//pointLight1.SetLight(&fullShader, myCamera.GetPos());
+		//pointLight2.SetLight(&fullShader, myCamera.GetPos());
+		sLight1.SetLight(&fullShader, myCamera.GetPos());
+
+		// Las matrices
+		mat4 model;
+		mat4 view;
+		mat4 projection;
+
+		cubo.Move(cubeMov);
+		cubo.Rotate(vec3(0.f, 1.f, 0.f), cubeRot);
+		model = cubo.GetModelMatrix();
+		view = myCamera.LookAt();
+		projection = perspective(myCamera.GetFOV(), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
+		//lo pasamos al shader
+		GLint modelMatVar = glGetUniformLocation(fullShader.Program, "model");
+		GLint viewMatVar = glGetUniformLocation(fullShader.Program, "view");
+		GLint projMatVar = glGetUniformLocation(fullShader.Program, "projection");
+		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+		//Pintamos el cubo		
+		cubo.Draw();
+
+		//LAMPARA1
+		lampShader.USE();
+		// Las matrices
+		model = lamp1.GetModelMatrix();
+		//las pasamos al shader
+		modelMatVar = glGetUniformLocation(lampShader.Program, "model");
+		viewMatVar = glGetUniformLocation(lampShader.Program, "view");
+		projMatVar = glGetUniformLocation(lampShader.Program, "projection");
+		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+		//Pintamos ya el cubo lampara
+		lamp1.Draw();
+		//LAMPARA2
+		// Las matrices
+		model = lamp2.GetModelMatrix();
+		//las pasamos al shader
+		modelMatVar = glGetUniformLocation(lampShader.Program, "model");
+		viewMatVar = glGetUniformLocation(lampShader.Program, "view");
+		projMatVar = glGetUniformLocation(lampShader.Program, "projection");
+		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+		//Pintamos ya el cubo lampara
+		lamp2.Draw();
+		//LAMPARA3
+		// Las matrices
+		model = lamp3.GetModelMatrix();
+		//las pasamos al shader
+		modelMatVar = glGetUniformLocation(lampShader.Program, "model");
+		viewMatVar = glGetUniformLocation(lampShader.Program, "view");
+		projMatVar = glGetUniformLocation(lampShader.Program, "projection");
+		glUniformMatrix4fv(viewMatVar, 1, GL_FALSE, value_ptr(view));
+		glUniformMatrix4fv(projMatVar, 1, GL_FALSE, value_ptr(projection));
+		glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
+		//Pintamos ya el cubo lampara
+		lamp3.Draw();
+		
+		
+		
+		
+		/*
 		if (lightType == 2) {
 			dirShader.USE();
 
@@ -248,7 +281,7 @@ int main() {
 			glUniformMatrix4fv(modelMatVar, 1, GL_FALSE, value_ptr(model));
 			//Pintamos el cubo		
 			cubo.Draw();			
-		}		
+		}	*/	
 		
 		//eventos
 		glfwPollEvents();

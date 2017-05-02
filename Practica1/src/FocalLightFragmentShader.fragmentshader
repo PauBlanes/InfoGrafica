@@ -23,7 +23,7 @@ uniform vec3 Fdir;
 
 void main()
 {		
-	//ahora comprovar si esta dentro del foco
+	//ahora comprobar si esta dentro del foco
 	vec3 lightDir = normalize(lightPos - worldPos);
 	float theta = dot(lightDir,normalize(-Fdir));
 	

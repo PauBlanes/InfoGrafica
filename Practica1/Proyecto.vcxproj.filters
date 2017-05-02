@@ -36,6 +36,9 @@
     <ClCompile Include="src\material.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>Archivos de recursos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\myShader.h">
@@ -54,6 +57,9 @@
       <Filter>Archivos de recursos</Filter>
     </ClInclude>
     <ClInclude Include="src\material.h">
+      <Filter>Archivos de recursos</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light.h">
       <Filter>Archivos de recursos</Filter>
     </ClInclude>
   </ItemGroup>

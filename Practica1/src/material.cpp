@@ -41,12 +41,12 @@ Material::~Material(){
 
 void Material::SetMaterial(Shader *shad) {
 
-	glUniform1i(glGetUniformLocation(shad->Program, "myMat.diffuse"), 0);
-	glUniform1i(glGetUniformLocation(shad->Program, "myMat.specular"), 1);
+	glUniform1i(glGetUniformLocation(shad->Program, "material.diffuse"), 0);
+	glUniform1i(glGetUniformLocation(shad->Program, "material.specular"), 1);
 }
 
 void Material::SetShininess(Shader *shad) {
-	GLfloat shinyVar = glGetUniformLocation(shad->Program, "myMat.shininess");
+	GLfloat shinyVar = glGetUniformLocation(shad->Program, "material.shininess");
 	glUniform1f(shinyVar, Shininess);
 }
 
