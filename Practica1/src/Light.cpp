@@ -38,11 +38,11 @@ void Light::SetAperture(float min, float max) {
 void Light::SetLight(Shader *shad, vec3 CamPos) {
 	std::string variable; //la luz en sí
 
-	//la pos de la camera
-	glUniform3f(glGetUniformLocation(shad->Program, "viewPos"), CamPos.x, CamPos.y, CamPos.z);	
-	 
+						  //la pos de la camera
+	glUniform3f(glGetUniformLocation(shad->Program, "viewPos"), CamPos.x, CamPos.y, CamPos.z);
+
 	//Y variables ya diferentes para cada una
-	switch (LightType){
+	switch (LightType) {
 	case DIRECTIONAL:
 		variable = "dlight";
 		//dirección
@@ -52,7 +52,7 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".diffuseColor").c_str()), Ldiffuse.r, Ldiffuse.g, Ldiffuse.b);
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".specularColor").c_str()), Lspecular.r, Lspecular.g, Lspecular.b);
 		break;
-	case POINT:		
+	case POINT:
 		variable = "plight[" + std::to_string(lightNumber) + "]";
 		//posicion
 		glUniform3f(glGetUniformLocation(shad->Program, (variable + ".position").c_str()), Lpos.x, Lpos.y, Lpos.z);
@@ -86,11 +86,11 @@ void Light::SetLight(Shader *shad, vec3 CamPos) {
 		break;
 	default:
 		break;
-	}	
+	}
 }
 
-void Light::Rotate(vec3 rotation) {	
-//opcional
+void Light::Rotate(vec3 rotation) {
+	//opcional
 }
 
 void Light::SetDirection(vec3 dir) {

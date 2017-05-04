@@ -1,6 +1,6 @@
 #include "material.h"
 
-Material::Material(char *DiffPath, char*SpectPath, float Shini){
+Material::Material(char *DiffPath, char*SpectPath, float Shini) {
 	Shininess = Shini;
 
 	//crear textura1
@@ -34,7 +34,7 @@ Material::Material(char *DiffPath, char*SpectPath, float Shini){
 }
 
 
-Material::~Material(){
+Material::~Material() {
 	glDeleteTextures(1, &TextDiff);
 	glDeleteTextures(1, &TextSpec);
 }

@@ -5,10 +5,10 @@
 using namespace glm;
 #include "myShader.h"
 
-class Object{
-	
+class Object {
+
 public:
-	enum FigureType{
+	enum FigureType {
 		cube = 0,
 	};
 
@@ -22,6 +22,7 @@ public:
 	void Delete();
 	mat4 GetModelMatrix();
 	vec3 GetPosition();
+	void ChangeColor(vec3 color, Shader *shad);
 
 private:
 	GLuint VBO, VAO, EBO;

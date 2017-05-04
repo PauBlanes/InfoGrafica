@@ -63,14 +63,17 @@ vec3 SpotLight(SLight light, vec3 Normal, vec3 viewDirection);
 
 void main(){
 	vec3 viewDir = normalize(viewPos - FragPos);
+	
 	vec3 final;
 	
-	//for (int i = 0; i < NUM_MAX_PLIGHTS; i++) {
-	//	final += PointLight (plight[i], Normal, viewDir);
-	//}
-	for (int i = 0; i < NUM_MAX_SLIGHTS; i++) {
-		final += SpotLight (slight[i], Normal, viewDir);
-	}
+	final = DirectionalLight(dlight,Normal,viewDir);
+	//los point lights
+	for (int i = 0;i < NUM_MAX_PLIGHTS;i++)
+		final += PointLight (plight[i], Normal, viewDir);
+	//los spotlights
+	for (int i = 0; i< NUM_MAX_SLIGHTS;i++)
+		final += SpotLight(slight[i], Normal, viewDir);
+	
 	color = vec4 (final, 1.0f);
 		
 	
@@ -78,7 +81,7 @@ void main(){
 
 vec3 DirectionalLight(DLight light, vec3 Normal, vec3 viewDirection){
 	// Ambient
-    float ambientStrength = 0.3f;
+    float ambientStrength = 0.2f;
     vec3 ambient = ambientStrength * light.ambientColor * vec3(texture(material.diffuse, TexCoords));
 
     // Diffuse 
@@ -124,14 +127,15 @@ vec3 PointLight(PLight light, vec3 Normal, vec3 viewDirection){
 }
 
 vec3 SpotLight(SLight light, vec3 Normal, vec3 viewDirection){
-	//ahora comprobar si esta dentro del foco
+	    
+    //ahora comprovar si esta dentro del foco
 	vec3 lightDir = normalize(light.position - FragPos);
 	float theta = dot(lightDir,normalize(-light.direction));
 	
 	if (theta > light.maxApertura) { //estara dentro
 		// Ambient
         float ambientStrength = 0.3f;
-		vec3 ambient = ambientStrength * light.ambientColor * vec3(texture(material.diffuse, TexCoords));
+		vec3 ambient = ambientStrength* light.ambientColor * vec3(texture(material.diffuse, TexCoords));
         
         // Diffuse 
         vec3 norm = normalize(Normal);        
@@ -139,9 +143,10 @@ vec3 SpotLight(SLight light, vec3 Normal, vec3 viewDirection){
         vec3 diffuse = light.diffuseColor * diff * vec3(texture(material.diffuse, TexCoords));  
         
         // Specular
+        vec3 viewDir = normalize(viewPos - FragPos);
         vec3 reflectDir = reflect(-lightDir, norm);  
-        float spec = pow(max(dot(viewDirection, reflectDir), 0.0), material.shininess);
-        vec3 specular = light.specularColor * spec * vec3(texture(material.specular, TexCoords));
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128);
+        vec3 specular = light.specularColor * spec * vec3(texture(material.diffuse, TexCoords));
         
 		//intensidad dentro
 		float epsilon   = light.minApertura - light.maxApertura;
@@ -151,17 +156,21 @@ vec3 SpotLight(SLight light, vec3 Normal, vec3 viewDirection){
 
         // Attenuation
         float d  = length(light.position - FragPos);
-        float att = 1.0f / (light.constant+light.linear*d+(light.quadratic*pow(d,2)));
-
+        float att = 1.0f / (1+0.09*d+(0.032*pow(d,2)));    
+		ambient *= att;
         diffuse  *= att;
         specular *= att;   
-        
-		vec3 finalColor =  (ambient + diffuse + specular);        
-        return finalColor;
+                
+        return (ambient + diffuse + specular);
 		
 	}
 	else {
-		vec3 ambient = light.ambientColor * vec3(texture(material.specular, TexCoords));
+		 float ambientStrength = 0.3f;
+		vec3 ambient = ambientStrength * light.ambientColor * vec3(texture(material.diffuse, TexCoords));
+		float d  = length(light.position - FragPos);
+        float att = 1.0f / (light.constant+light.linear*d+(light.quadratic*pow(d,2)));    
+		ambient *= att;
 		return ambient;
 	}
+	
 }

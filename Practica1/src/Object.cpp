@@ -1,8 +1,8 @@
 #include "Object.h"
 
-Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
-	
-	GLfloat VertexBufferObject[]= {
+Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/) {
+
+	GLfloat VertexBufferObject[] = {
 		//front
 		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
 		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
@@ -52,7 +52,7 @@ Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
 	escala = scl;
 	//reservar memoria para el VAO, VBO y EBO
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);	
+	glGenBuffers(1, &VBO);
 
 	//Establecer el objeto
 	glBindVertexArray(VAO); {
@@ -67,8 +67,8 @@ Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
 		glEnableVertexAttribArray(1); //color
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2); //Textura
-		
-		//liberar el buffer
+
+									  //liberar el buffer
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	}
@@ -79,13 +79,13 @@ Object::Object(vec3 scl, vec3 rot, vec3 pos/*, FigureType typef*/){
 }
 
 
-Object::~Object(){
+Object::~Object() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 }
 
 void Object::Draw() {
-	
+
 	glBindVertexArray(VAO);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -93,13 +93,13 @@ void Object::Draw() {
 }
 void Object::Move(vec3 translation) {
 	position = translation;
-	
+
 }
 void Object::Rotate(vec3 rota, GLfloat rotationAmount) {
 	rotationAxis = rota;
 	rotation = rotationAmount;
 }
-void Object::Scale(vec3 scal){
+void Object::Scale(vec3 scal) {
 	escala = scal;
 }
 
@@ -109,7 +109,7 @@ mat4 Object::GetModelMatrix() {
 	if (length(rotationAxis) != 0)
 		temp = rotate(temp, radians(rotation), rotationAxis);
 	temp = scale(temp, escala);
-	
+
 	return temp;
 }
 
@@ -118,5 +118,9 @@ vec3 Object::GetPosition() {
 }
 
 void Object::Delete() {
-	
+
+}
+
+void Object::ChangeColor(vec3 color, Shader* shad) {
+	glUniform4f(glGetUniformLocation(shad->Program, "ourColor"), color.r, color.g, color.b, 1.0f);
 }
